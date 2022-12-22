@@ -112,7 +112,8 @@ class Trainer:
 
         # data
         datasets_dict = {"kitti": datasets.KITTIRAWDataset,
-                         "kitti_odom": datasets.KITTIOdomDataset}
+                         "kitti_odom": datasets.KITTIOdomDataset,
+                         "crop": datasets.CropRAWDataset}
         self.dataset = datasets_dict[self.opt.dataset]
 
         fpath = os.path.join(os.path.dirname(__file__), "splits", self.opt.split, "{}_files.txt")
@@ -322,10 +323,10 @@ class Trainer:
         """
         self.set_eval()
         try:
-            inputs = self.val_iter.next()
+            inputs = next(self.val_iter)
         except StopIteration:
             self.val_iter = iter(self.val_loader)
-            inputs = self.val_iter.next()
+            inputs = next(self.val_iter)
 
         with torch.no_grad():
             outputs, losses = self.process_batch(inputs)

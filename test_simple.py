@@ -14,7 +14,7 @@ import numpy as np
 import PIL.Image as pil
 import matplotlib as mpl
 import matplotlib.cm as cm
-
+import time
 import torch
 from torchvision import transforms, datasets
 
@@ -65,7 +65,7 @@ def test_simple(args):
         device = torch.device("cuda")
     else:
         device = torch.device("cpu")
-
+    print("device: ", device)
     if args.pred_metric_depth and "stereo" not in args.model_name:
         print("Warning: The --pred_metric_depth flag only makes sense for stereo-trained KITTI "
               "models. For mono-trained models, output depths will not in metric space.")
@@ -123,6 +123,7 @@ def test_simple(args):
 
             # Load image and preprocess
             input_image = pil.open(image_path).convert('RGB')
+            tic = time.time()
             original_width, original_height = input_image.size
             input_image = input_image.resize((feed_width, feed_height), pil.LANCZOS)
             input_image = transforms.ToTensor()(input_image).unsqueeze(0)
@@ -135,6 +136,7 @@ def test_simple(args):
             disp = outputs[("disp", 0)]
             disp_resized = torch.nn.functional.interpolate(
                 disp, (original_height, original_width), mode="bilinear", align_corners=False)
+            print("inference time: ", time.time() - tic)
 
             # Saving numpy file
             output_name = os.path.splitext(os.path.basename(image_path))[0]

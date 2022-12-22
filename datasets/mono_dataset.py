@@ -147,6 +147,11 @@ class MonoDataset(data.Dataset):
             frame_index = int(line[1])
         else:
             frame_index = 0
+        
+        if len(line) == 1 and (".jpg" in line[0]) or (".png" in line[0]):
+            frame_index = index
+
+        # print("frame index: ", frame_index)
 
         if len(line) == 3:
             side = line[2]
@@ -154,6 +159,8 @@ class MonoDataset(data.Dataset):
             side = None
 
         for i in self.frame_idxs:
+            # print("frame idx: ", i)
+
             if i == "s":
                 other_side = {"r": "l", "l": "r"}[side]
                 inputs[("color", i, -1)] = self.get_color(folder, frame_index, other_side, do_flip)
@@ -173,10 +180,13 @@ class MonoDataset(data.Dataset):
             inputs[("inv_K", scale)] = torch.from_numpy(inv_K)
 
         if do_color_aug:
-            color_aug = transforms.ColorJitter.get_params(
-                self.brightness, self.contrast, self.saturation, self.hue)
+            # color_aug = transforms.ColorJitter.get_params(
+            #     self.brightness, self.contrast, self.saturation, self.hue)
+            color_aug = transforms.ColorJitter(self.brightness, self.contrast, self.saturation, self.hue)
         else:
             color_aug = (lambda x: x)
+
+
 
         self.preprocess(inputs, color_aug)
 
