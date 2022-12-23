@@ -32,6 +32,11 @@ class CropDataset(MonoDataset):
                             [0.        , 0.        , 1.        ,0 ],
                             [0, 0, 0, 1]], dtype=np.float32)
 
+        # self.K = np.array([[0.57674649, 0.        , 0.49093581, 0],
+        #                     [0.        , 1.9110573 , 0.49489297, 0],
+        #                     [0.        , 0.        , 1.        ,0 ],
+        #                     [0, 0, 0, 1]], dtype=np.float32)
+
         self.full_res_shape = (416, 128)
         self.side_map = {"2": 2, "3": 3, "l": 2, "r": 3}
 
